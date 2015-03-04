@@ -9,7 +9,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  */
-
+#define DEBUG
 #define pr_fmt(fmt) "%s:%d] " fmt "\n", __func__, __LINE__
 
 #include <linux/init.h>
@@ -35,6 +35,7 @@
 #define QCA1530_TCXO_CLK_ID		"qca,tcxo_clk"
 /* SoC power regulator prefix for DTS */
 #define QCA1530_OF_PWR_REG_NAME		"qca,pwr"
+#define QCA1530_OF_POWER_CURRENT	"qca,current-level"
 /* SoC optional power regulator prefix for DTS */
 #define QCA1530_OF_PWR_OPT_REG_NAME	"qca,pwr2"
 /* SoC power regulator pin for DTS */
@@ -89,6 +90,7 @@ struct qca1530_static {
 	int			rtc_clk_gpio;
 	struct clk		*tcxo_clk;
 	struct regulator	*pwr_reg;
+	u32 pwr_reg_max_cur;
 	struct regulator	*pwr_opt_reg;
 	int			pwr_gpio;
 	struct regulator	*xlna_reg;
@@ -106,6 +108,10 @@ static struct qca1530_static qca1530_data = {
 	.xlna_gpio = -1,
 	.chip_state = 0,
 };
+
+static int qca1530_read_u32_arr_property(struct platform_device *pdev,
+	const char *pname, const int num_values, u32 *values);
+
 
 /**
  * qca1530_deinit_gpio() - release GPIO resource
@@ -434,6 +440,12 @@ static int qca1530_pwr_set_regulator(struct regulator *reg, int mode)
 	pr_debug("Setting regulator: mode=%d regulator=%p", mode, reg);
 
 	if (mode) {
+		ret = regulator_set_optimum_mode(qca1530_data.pwr_reg, qca1530_data.pwr_reg_max_cur);
+		if (ret < 0)
+			pr_warn("Failed to set optimum mode, ret=%d", ret);
+		else
+			pr_debug("Optimum mode for %p was set (%d)", qca1530_data.pwr_reg, ret);
+
 		ret = regulator_enable(reg);
 		if (ret)
 			pr_err("Failed to enable regulator, rc=%d", ret);
@@ -444,6 +456,12 @@ static int qca1530_pwr_set_regulator(struct regulator *reg, int mode)
 		if (!regulator_is_enabled(reg)) {
 			ret = 0;
 		} else {
+			ret = regulator_set_optimum_mode(qca1530_data.pwr_reg, 0);
+			if (ret < 0)
+				pr_warn("Failed to set optimum mode, ret=%d", ret);
+			else
+				pr_debug("Optimum mode for %p was set (%d)", qca1530_data.pwr_reg, ret);
+
 			ret = regulator_disable(reg);
 			if (ret)
 				pr_err("Failed to disable regulator, rc=%d",
@@ -556,7 +574,14 @@ static int qca1530_pwr_init(struct platform_device *pdev)
 		pdev, QCA1530_OF_PWR_REG_NAME, &qca1530_data.pwr_reg);
 	if (ret)
 		goto err_0;
+	if (qca1530_data.pwr_reg) {
+		ret = qca1530_read_u32_arr_property(pdev, QCA1530_OF_POWER_CURRENT, 1, &qca1530_data.pwr_reg_max_cur);
 
+		if (ret)
+			pr_warn("Failed to get max current, ret=%d", ret);
+		else
+			pr_debug("Regulator %p max required current (%d)", qca1530_data.xlna_reg, qca1530_data.pwr_reg_max_cur);
+	}
 	ret = qca1530_pwr_init_regulator(
 		pdev, QCA1530_OF_PWR_OPT_REG_NAME, &qca1530_data.pwr_opt_reg);
 	if (ret)

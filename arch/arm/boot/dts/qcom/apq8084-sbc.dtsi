@@ -79,6 +79,7 @@
 		qca,reset-gpio = <&msmgpio 128 0>;
 		qca,clk-gpio = <&pma8084_gpios 17 0>;
 		qca,pwr-supply = <&pma8084_l26>;
+		qca,current-level = <120000>;
 	};
 
 	qcom,cnss@0d400000 {
