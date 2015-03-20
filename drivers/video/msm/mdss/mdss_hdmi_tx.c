@@ -1259,6 +1259,7 @@ static int hdmi_tx_init_panel_info(struct hdmi_tx_ctrl *hdmi_ctrl)
 	timing = hdmi_get_supported_mode(hdmi_ctrl->video_resolution);
 	pinfo = &hdmi_ctrl->panel_data.panel_info;
 
+    DEV_ERR("%s: Pawan pinfo =%p\n", __func__, pinfo);
 	if (!timing || !pinfo) {
 		DEV_ERR("%s: invalid timing data\n", __func__);
 		return -EINVAL;
@@ -3360,8 +3361,10 @@ static int hdmi_tx_register_panel(struct hdmi_tx_ctrl *hdmi_ctrl)
 
 	hdmi_ctrl->panel_data.event_handler = hdmi_tx_panel_event_handler;
 
-	if (!hdmi_ctrl->pdata.primary)
-		hdmi_ctrl->video_resolution = DEFAULT_VIDEO_RESOLUTION;
+	if (hdmi_ctrl->pdata.primary)
+		hdmi_ctrl->video_resolution = HDMI_VFRMT_1920x1080p60_16_9;
+    else
+        hdmi_ctrl->video_resolution = DEFAULT_VIDEO_RESOLUTION;
 
 	rc = hdmi_tx_init_panel_info(hdmi_ctrl);
 	if (rc) {
