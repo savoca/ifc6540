@@ -26,6 +26,40 @@
 		status = "disabled";
 	};
 
+        i2c@f9966000 {
+            himax8526a@4a {
+              compatible = "msm,himax";
+              reg = <0x4a>;
+              interrupt-parent = <&msmgpio>;
+              interrupts = <143 0x2>;
+			  msm,abs_x_min = <0>;
+			  msm,abs_x_max = <480>;
+              msm,abs_y_min = <0>;
+			  msm,abs_y_max = <800>;
+			  msm,abs_pressure_min = <0>;
+			  msm,abs_pressure_max = <31>;
+			  msm,abs_width_min = <0>;
+			  msm,abs_width_max = <31>;
+			  msm,inv_x = <1>;
+			  msm,inv_y = <1>;
+              msm,reset-gpio = <&msmgpio 145 0x00>;
+
+            msm,platform-supply-entry1 {
+                        qcom,supply-name = "vdd_ana";
+                        qcom,supply-min-voltage = <3300000>;
+                        qcom,supply-max-voltage = <3300000>;
+                        qcom,supply-enable-load = <3300000>;
+                        qcom,supply-disable-load = <100>;
+                        qcom,supply-pre-on-sleep = <0>;
+                        qcom,supply-post-on-sleep = <0>;
+                        qcom,supply-pre-off-sleep = <0>;
+                        qcom,supply-post-off-sleep = <0>;
+                   };
+
+
+                };
+	};
+
 	serial@f991f000 {
 		status = "disabled";
 	};
@@ -96,20 +130,45 @@
 };
 
 &mdss_mdp {
-	qcom,mdss-pref-prim-intf = "hdmi";
+	qcom,mdss-pref-prim-intf = "dsi";
 };
 
 &mdss_hdmi_tx {
-	qcom,primary_panel = <1>;
-	qcom,mdss-fb-map = <&mdss_fb0>;
+//	qcom,primary_panel = <1>;
+//	qcom,mdss-fb-map = <&mdss_fb0>;
 	hpd-5v-en-supply = <&vph_pwr_vreg>;
 	qcom,supply-names = "hpd-gdsc", "hpd-5v", "core-vdda", "core-vcc";
 	qcom,min-voltage-level = <0 0 1800000 1800000>;
 	qcom,max-voltage-level = <0 0 1800000 1800000>;
 	qcom,enable-load = <0 0 300000 0>;
 	qcom,disable-load = <0 0 0 0>;
-	status = "ok";
+//	status = "ok";
 };
+
+#include "apq8084-mdss-panels.dtsi"
+
+&dsi_ifc_truly_vid {
+        qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_pwm";
+        qcom,mdss-dsi-bl-pmic-pwm-frequency = <50>;
+        qcom,mdss-dsi-bl-pmic-bank-select = <2>;
+        qcom,mdss-dsi-pwm-gpio = <&pma8084_gpios 7 0>;
+};
+
+
+
+&mdss_dsi0 {
+	qcom,primary_panel = <1>;
+	qcom,dsi-pref-prim-pan = <&dsi_ifc_truly_vid>;
+    qcom,platform-te-gpio = <&msmgpio 12 0>;
+    qcom,platform-reset-gpio = <&msmgpio 96 0>;
+    qcom,platform-enable-gpio = <&msmgpio 27 0>;
+    qcom,platform-bklight-en-gpio = <&msmgpio 86 0>;
+};
+
+&mdss_fb0 {
+        qcom,memory-reservation-size = <0x1C20000>;
+};
+
 
 &uart6 {
 	status = "ok";

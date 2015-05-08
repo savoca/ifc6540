@@ -11,6 +11,7 @@
  */
 
 #include "dsi-panel-jdi-1080p-video.dtsi"
+#include "dsi-panel-ifc-truly.dtsi"
 #include "dsi-panel-jdi-dualmipi0-video.dtsi"
 #include "dsi-panel-jdi-dualmipi1-video.dtsi"
 #include "dsi-panel-jdi-dualmipi0-cmd.dtsi"
