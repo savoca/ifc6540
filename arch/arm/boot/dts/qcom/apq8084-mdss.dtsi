@@ -212,9 +212,9 @@
 			qcom,ctrl-supply-entry@2 {
                                 reg = <2>;
                                 qcom,supply-name = "vdddis28";
-                                qcom,supply-min-voltage = <3300000>;
-                                qcom,supply-max-voltage = <3300000>;
-                                qcom,supply-enable-load = <3300000>;
+                                qcom,supply-min-voltage = <2800000>;
+                                qcom,supply-max-voltage = <2800000>;
+                                qcom,supply-enable-load = <2800000>;
                                 qcom,supply-disable-load = <100>;
                                 qcom,supply-post-on-sleep = <20>;
                         };
@@ -248,9 +248,9 @@
                         qcom,panel-supply-entry@2 {
                                 reg = <2>;
                                 qcom,supply-name = "vdddis28";
-                                qcom,supply-min-voltage = <3300000>;
-                                qcom,supply-max-voltage = <3300000>;
-                                qcom,supply-enable-load = <3300000>;
+                                qcom,supply-min-voltage = <2800000>;
+                                qcom,supply-max-voltage = <2800000>;
+                                qcom,supply-enable-load = <2800000>;
                                 qcom,supply-disable-load = <100>;
                                 qcom,supply-post-on-sleep = <20>;
                         };
@@ -322,9 +322,9 @@
                         qcom,ctrl-supply-entry@2 {
                                 reg = <2>;
                                 qcom,supply-name = "vdddis28";
-                                qcom,supply-min-voltage = <3300000>;
-                                qcom,supply-max-voltage = <3300000>;
-                                qcom,supply-enable-load = <3300000>;
+                                qcom,supply-min-voltage = <2800000>;
+                                qcom,supply-max-voltage = <2800000>;
+                                qcom,supply-enable-load = <2800000>;
                                 qcom,supply-disable-load = <100>;
                                 qcom,supply-post-on-sleep = <20>;
                         };
@@ -358,9 +358,9 @@
                         qcom,panel-supply-entry@2 {
                                 reg = <2>;
                                 qcom,supply-name = "vdddis28";
-                                qcom,supply-min-voltage = <3300000>;
-                                qcom,supply-max-voltage = <3300000>;
-                                qcom,supply-enable-load = <3300000>;
+                                qcom,supply-min-voltage = <2800000>;
+                                qcom,supply-max-voltage = <2800000>;
+                                qcom,supply-enable-load = <2800000>;
                                 qcom,supply-disable-load = <100>;
                                 qcom,supply-post-on-sleep = <20>;
                         };
