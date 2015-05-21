@@ -526,7 +526,6 @@ void mdss_dsi_op_mode_config(int mode,
 	}
 
 	dma_ctrl = BIT(28);	/* embedded mode */
-	dma_ctrl |= BIT(26);     /* power mode */
 	if (mdss_dsi_sync_wait_enable(ctrl_pdata))
 		dma_ctrl |= BIT(31);
 
