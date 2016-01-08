@@ -1564,6 +1564,29 @@ out:
 static DEVICE_ATTR(ts_fw, (S_IWUSR|S_IRUGO),
 		   himax_firmware_show, himax_firmware_set);
 
+static ssize_t himax_debug_node_show(struct device *dev,
+	struct device_attribute *attr, char *buf)
+{
+	unsigned char data[3];
+	struct i2c_client *client =
+		container_of(dev, struct i2c_client, dev);
+	struct himax_data *ts = i2c_get_clientdata(client);
+
+	if (!ts)
+		return -ENODEV;
+
+	memset(data, 0x00, sizeof(data));
+
+	if (himax_i2c_read(ts->client, HX_CMD_DEVICE_ID, data, 3))
+		return scnprintf(buf, PAGE_SIZE, "%s\n", "i2c read failed");
+
+	return scnprintf(buf, PAGE_SIZE, "%02x %02x %02x\n",
+		data[0], data[1], data[2]);
+}
+
+static DEVICE_ATTR(debug_node, S_IRUSR,
+	himax_debug_node_show, NULL);
+
 static int himax_sysfs_init(struct himax_data *ts)
 {
 	int ret;
@@ -1607,11 +1630,20 @@ static int himax_sysfs_init(struct himax_data *ts)
 	if (ret) {
 		dev_err(&ts->client->dev,
 			"sysfs entry for firmware failed\n");
+		goto error_rm_dev_file_reset;
+	}
+
+	ret = device_create_file(&ts->client->dev, &dev_attr_debug_node);
+	if (ret) {
+		dev_err(&ts->client->dev,
+			"sysfs entry for debug node failed\n");
 		goto error_rm_dev_file_firmware;
 	}
 
 	return 0;
 error_rm_dev_file_firmware:
+	device_remove_file(&ts->client->dev, &dev_attr_ts_fw);
+error_rm_dev_file_reset:
 	device_remove_file(&ts->client->dev, &dev_attr_reset);
 error_rm_dev_file_register:
 	device_remove_file(&ts->client->dev, &dev_attr_register);
@@ -1627,6 +1659,7 @@ error_dev_file_debug_level:
 
 static void himax_sysfs_deinit(struct himax_data *ts)
 {
+	device_remove_file(&ts->client->dev, &dev_attr_debug_node);
 	device_remove_file(&ts->client->dev, &dev_attr_ts_fw);
 	device_remove_file(&ts->client->dev, &dev_attr_reset);
 	device_remove_file(&ts->client->dev, &dev_attr_register);
