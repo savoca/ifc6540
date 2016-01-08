@@ -147,7 +147,7 @@
 
 #include "apq8084-mdss-panels.dtsi"
 
-&dsi_jdi_1080_vid {
+&dsi_ifc_truly_vid {
         qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_pwm";
         qcom,mdss-dsi-bl-pmic-pwm-frequency = <50>;
         qcom,mdss-dsi-bl-pmic-bank-select = <2>;
@@ -158,7 +158,7 @@
 
 &mdss_dsi0 {
 	qcom,primary_panel = <1>;
-    qcom,dsi-pref-prim-pan = <&dsi_jdi_1080_vid>;
+	qcom,dsi-pref-prim-pan = <&dsi_ifc_truly_vid>;
     qcom,platform-te-gpio = <&msmgpio 12 0>;
     qcom,platform-reset-gpio = <&msmgpio 96 0>;
     qcom,platform-enable-gpio = <&msmgpio 27 0>;
